@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SwiftCV Pro | FAQs</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #0f172a; --accent: #10b981; --bg: #f8fafc; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); margin: 0; color: #1e293b; line-height: 1.6; }
+        
+        .navbar { background: var(--primary); padding: 1rem 5%; display: flex; justify-content: space-between; align-items: center; color: white; }
+        .logo span { font-weight: 800; color: var(--accent); font-size: 1.5rem; }
+        .nav-links a { color: white; text-decoration: none; margin-left: 20px; font-weight: 500; }
+
+        header { background: var(--primary); color: white; padding: 40px 5%; text-align: center; }
+        
+        .container { max-width: 800px; margin: 40px auto; padding: 0 20px; }
+        .faq-card { background: white; padding: 25px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .faq-card h3 { color: var(--accent); margin-top: 0; }
+        
+        .btn-back { display: inline-block; margin-top: 20px; color: var(--primary); font-weight: 600; text-decoration: none; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo"><span>SwiftCV Pro</span></div>
+        <div class="nav-links">
+            <a href="index.html">Dashboard</a>
+            <a href="Form.html">Create Resume</a>
+        </div>
+    </nav>
+
+    <header>
+        <h1>Frequently Asked Questions</h1>
+        <p>Everything you need to know about SwiftCV Pro.</p>
+    </header>
+
+    <div class="container">
+        <div class="faq-card">
+            <h3>How do I save my resume?</h3>
+            <p>Simply click the "Sync to Cloud" button at the end of the form. Your data is instantly stored in our Supabase cloud database.</p>
+        </div>
+
+        <div class="faq-card">
+            <h3>Can I edit my resume later?</h3>
+            <p>Yes! On your Dashboard, click "Edit Details" on any saved resume to update your information.</p>
+        </div>
+
+        <div class="faq-card">
+            <h3>Is it free to download as PDF?</h3>
+            <p>Absolutely. Once you finish the third step of the builder, click "Download PDF" to save a copy to your device.</p>
+        </div>
+
+        <a href="index.html" class="btn-back">← Back to Dashboard</a>
+    </div>
+
+</body>
+</html>

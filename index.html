@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume-Builder</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root { --primary: #0f172a; --accent: #10b981; --danger: #ef4444; }
+        body { font-family: 'Inter', sans-serif; background: #f8fafc; margin: 0; color: #1e293b; }
+        
+        .navbar { background: var(--primary); padding: 1rem 5%; display: flex; justify-content: space-between; align-items: center; color: white; position: sticky; top: 0; z-index: 1000; }
+        .logo span { font-weight: 800; color: var(--accent); font-size: 1.5rem; }
+        
+        header { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: white; padding: 60px 5%; text-align: center; }
+        
+        .dashboard-container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        
+        .btn { padding: 10px 20px; border-radius: 8px; border: none; cursor: pointer; font-weight: 600; text-decoration: none; display: inline-block; transition: 0.3s; }
+        .btn-primary { background: var(--accent); color: white; }
+        .btn-primary:hover { opacity: 0.9; transform: translateY(-2px); }
+        
+        .resume-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; }
+        .resume-card { background: white; padding: 25px; border-radius: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; position: relative; }
+        .resume-card h3 { margin: 0 0 10px 0; font-size: 1.25rem; color: var(--primary); }
+        .resume-card p { font-size: 0.9rem; color: #64748b; margin-bottom: 20px; }
+        
+        .card-actions { display: flex; gap: 10px; border-top: 1px solid #f1f5f9; pt: 15px; margin-top: 15px; padding-top: 15px; }
+        .btn-edit { background: #f1f5f9; color: var(--primary); font-size: 0.85rem; }
+        .btn-delete { background: #fee2e2; color: var(--danger); font-size: 0.85rem; }
+        
+        #loadingStatus { text-align: center; padding: 50px; font-weight: 600; color: #64748b; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo"><span>SwiftCV Pro</span></div>
+        <div class="nav-links">
+            <a href="faq.html" style="color: white; text-decoration: none; margin-right: 20px;">Help/FAQ</a>
+            <a href="Form.html" class="btn btn-primary">+ Create New Resume</a>
+        </div>
+    </nav>
+
+    <header>
+        <h1>Welcome Back</h1>
+        <p>You have <span id="resumeCount">0</span> resumes saved in the cloud.</p>
+    </header>
+
+    <main class="dashboard-container">
+        <div class="section-header">
+            <h2>Your Saved Work</h2>
+        </div>
+
+        <div id="loadingStatus">Fetching your resumes...</div>
+        <div id="resumeList" class="resume-grid"></div>
+    </main>
+
+    <script>
+        // USE THE SAME CREDENTIALS FROM YOUR FORM.HTML
+        const _supabase = supabase.createClient(
+            'https://choosnjwckopmfunzccb.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNob29zbmp3Y2tvcG1mdW56Y2NiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk4MzEzOTUsImV4cCI6MjA4NTQwNzM5NX0.tWMtkjpAdUAV0dkU9ICdZariMOxwjtMUItWPrRXBpTU'
+        );
+
+        async function fetchResumes() {
+            const { data, error } = await _supabase
+                .from('resumes')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            const container = document.getElementById('resumeList');
+            const status = document.getElementById('loadingStatus');
+            const countDisplay = document.getElementById('resumeCount');
+
+            if (error) {
+                status.innerText = "Failed to load resumes. Check your connection.";
+                return;
+            }
+
+            status.style.display = 'none';
+            countDisplay.innerText = data.length;
+
+            if (data.length === 0) {
+                container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 40px;">
+                    <p>No resumes found. Start by creating one!</p>
+                    <a href="Form.html" class="btn btn-primary" style="margin-top: 15px;">Get Started</a>
+                </div>`;
+                return;
+            }
+
+            container.innerHTML = '';
+            data.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'resume-card';
+                card.id = `resume-${item.id}`;
+                
+                // Format the date
+                const date = new Date(item.created_at).toLocaleDateString('en-US', {
+                    month: 'short', day: 'numeric', year: 'numeric'
+                });
+
+                card.innerHTML = `
+                    <h3>${item.title || 'Untitled Resume'}</h3>
+                    <p>Last edited: ${date}</p>
+                    <div class="card-actions">
+                        <a href="Form.html?edit=${item.id}" class="btn btn-edit">Edit Details</a>
+                        <button onclick="deleteResume(${item.id})" class="btn btn-delete">Delete</button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        async function deleteResume(id) {
+            if (confirm("Are you sure you want to delete this resume? This cannot be undone.")) {
+                const { error } = await _supabase
+                    .from('resumes')
+                    .delete()
+                    .eq('id', id);
+
+                if (!error) {
+                    document.getElementById(`resume-${id}`).remove();
+                    // Update count
+                    const countDisplay = document.getElementById('resumeCount');
+                    countDisplay.innerText = parseInt(countDisplay.innerText) - 1;
+                } else {
+                    alert("Error deleting resume: " + error.message);
+                }
+            }
+        }
+
+        // Initial Load
+        fetchResumes();
+    </script>
+</body>
+</html>
