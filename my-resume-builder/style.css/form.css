@@ -1,0 +1,33 @@
+/* DASHBOARD UI STYLE */
+.form-step {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px !important;
+  padding: 3rem !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05) !important;
+}
+
+input, textarea, select {
+  background-color: #f1f5f9;
+  border: 2px solid transparent !important;
+  transition: all 0.2s ease;
+}
+
+input:focus {
+  background-color: white;
+  border-color: #10b981 !important;
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+}
+
+.education-entry, .work-entry {
+  border-left: 4px solid #10b981;
+  background: #f8fafc !important;
+  padding: 1.5rem !important;
+}
+
+.template img:hover {
+  border-color: #10b981 !important;
+  transform: translateY(-5px);
+  transition: transform 0.3s ease;
+}
